@@ -5,43 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Ringly</title>
     <style>
-        body {
+        /* Reset unwanted gaps */
+        html, body {
+            margin: 0;
+            padding: 0;
             font-family: Arial, sans-serif;
-            margin:0;
-            padding:0;
             background:#f5f5dc;
         }
+
+        header h1,
+        header p {
+            margin: 0;
+        }
+
         header {
             background:#111;
             color:#fff;
             padding:20px;
             text-align:center;
         }
+
         header img {
             height:60px;
             display:block;
             margin:0 auto 10px auto;
         }
+
         nav {
             background:#222;
             padding:10px;
             text-align:center;
         }
+
         nav a {
             color:#fff;
             margin:0 15px;
             text-decoration:none;
         }
 
-        /* FIXED HERO — no cropping */
+        /* HERO — remove all gap */
         .hero {
-            width:100%;
-            margin:0;
+            margin: 0;
+            padding: 0;
         }
+
         .hero img {
             width:100%;
             height:auto;
-            display:block;
+            display:block; /* removes bottom whitespace */
         }
 
         .container {
@@ -49,6 +60,7 @@
             max-width:900px;
             margin:auto;
         }
+
         footer {
             background:#111;
             color:#fff;
@@ -58,6 +70,7 @@
         }
     </style>
 </head>
+
 <body>
 
 <header>
@@ -86,7 +99,9 @@
     </p>
 </div>
 
-<footer>© 2025 Ringly. All rights reserved.</footer>
+<footer>
+    © 2025 Ringly. All rights reserved.
+</footer>
 
 </body>
 </html>
