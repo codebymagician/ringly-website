@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.voxringly.app",
+      "sha256_cert_fingerprints": [
+        "44:C7:19:E1:AC:77:DD:2D:9C:51:4B:75:5C:D8:E3:93:B6:02:7E:1C:DC:00:DB:C4:DD:48:D2:2E:20:9E:2E:07"
+      ]
+    }
+  }
+]
+
