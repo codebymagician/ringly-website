@@ -5,15 +5,13 @@
     <title>Opening Ringly...</title>
 
     <script>
-        window.location =
-            "intent://feed#Intent;" +
-            "scheme=ringly;" +
-            "package=com.voxringly.app;" +
-            "S.browser_fallback_url=" +
-            encodeURIComponent(
+        window.location.href = "https://ringly.in/feed";
+
+        setTimeout(function () {
+            window.location.replace(
                 "https://play.google.com/store/apps/details?id=com.voxringly.app"
-            ) +
-            ";end";
+            );
+        }, 500);
     </script>
 </head>
 
