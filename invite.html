@@ -1,19 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Opening Ringly...</title>
-
     <script>
+        let appOpened = false;
+
+        document.addEventListener("visibilitychange", function () {
+            if (document.hidden) {
+                appOpened = true;
+            }
+        });
+
+        window.location.replace("https://ringly.in/feed");
+
         setTimeout(function () {
-            window.location.replace(
-                "https://play.google.com/store/apps/details?id=com.voxringly.app"
-            );
-        }, 500);
+            if (!appOpened) {
+                window.location.replace(
+                    "https://play.google.com/store/apps/details?id=com.voxringly.app"
+                );
+            }
+        }, 700);
     </script>
 </head>
-
-<body>
-Opening Ringly...
-</body>
+<body></body>
 </html>
