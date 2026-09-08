@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Get Ringly</title>
+    <meta name="description" content="Talk to verified astrologers on Ringly. Download the app to start.">
+    <style>
+        html, body { margin:0; height:100%; background:#111; color:#fff; font-family:Arial, sans-serif; }
+        main { min-height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:24px; text-align:center; }
+        img { height:60px; }
+        a { background:#fff; color:#111; padding:14px 28px; border-radius:999px; text-decoration:none; font-weight:bold; }
+        p { opacity:.7; font-size:14px; }
+    </style>
+</head>
+<body>
+<main>
+    <img src="/logo.png" alt="Ringly">
+    <h1>Opening Google Play&hellip;</h1>
+    <a id="cta" href="https://play.google.com/store/apps/details?id=com.voxringly.app">Download Ringly</a>
+    <p>Not redirected? Tap the button above.</p>
+</main>
+<script>
+    (function () {
+        // Pass the ad's UTMs through as the Play install referrer, so
+        // InstallReferrerManager can report them to Mixpanel on first open.
+        var q = new URLSearchParams(location.search);
+        var ref = new URLSearchParams();
+        ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "fbclid", "gclid"]
+            .forEach(function (k) { if (q.get(k)) ref.set(k, q.get(k)); });
+        if (!ref.has("utm_source")) ref.set("utm_source", "download");
+
+        var url = "https://play.google.com/store/apps/details?id=com.voxringly.app"
+            + "&referrer=" + encodeURIComponent(ref.toString());
+
+        document.getElementById("cta").href = url;
+        window.location.replace(url);
+    }());
+</script>
+</body>
+</html>
