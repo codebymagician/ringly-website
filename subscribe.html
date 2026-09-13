@@ -293,7 +293,6 @@
 <script>
 (function () {
     var BACKEND_BASE = "https://api.ringly.in";
-    var RAZORPAY_KEY_ID = "rzp_live_T1OeJD7pxdwxpu";
     var TENANT = "RINGLY";
     var PLAN_ID = "ringly-monthly-10";
     var RESEND_SECONDS = 30;
@@ -400,7 +399,7 @@
         api("/web-service/v1/public/initiate", { planId: PLAN_ID, method: "" })
             .then(function (data) {
                 var options = {
-                    key: RAZORPAY_KEY_ID,
+                    key: data.razorpayKeyId,
                     currency: data.currency || "INR",
                     name: "Ringly",
                     description: "Ringly Unlimited — Monthly Subscription",
