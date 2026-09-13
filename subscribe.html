@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ringly Unlimited</title>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background:#f5f5dc;
+        }
+
+        header h1, header p { margin: 0; }
+
+        header {
+            background:#111;
+            color:#fff;
+            padding:20px;
+            text-align:center;
+        }
+
+        header img {
+            height:60px;
+            display:block;
+            margin:0 auto 10px auto;
+        }
+
+        nav {
+            background:#222;
+            padding:10px;
+            text-align:center;
+        }
+
+        nav a {
+            color:#fff;
+            margin:0 15px;
+            text-decoration:none;
+            font-size:14px;
+        }
+
+        .container {
+            padding:25px;
+            max-width:420px;
+            margin:auto;
+        }
+
+        .card {
+            background:#fff;
+            border-radius:12px;
+            padding:24px;
+            box-shadow:0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom:20px;
+        }
+
+        .card h2 {
+            margin:0 0 6px 0;
+            font-size:20px;
+        }
+
+        .card .subtitle {
+            color:#666;
+            font-size:14px;
+            margin:0 0 18px 0;
+        }
+
+        .price-row {
+            display:flex;
+            align-items:baseline;
+            gap:8px;
+            margin-bottom:4px;
+        }
+
+        .price-row .amount {
+            font-size:28px;
+            font-weight:bold;
+        }
+
+        .price-row .cycle {
+            color:#666;
+            font-size:14px;
+        }
+
+        .coins-row {
+            color:#a8722c;
+            font-weight:bold;
+            font-size:14px;
+            margin-bottom:18px;
+        }
+
+        .tag {
+            display:inline-block;
+            background:#CF9563;
+            color:#fff;
+            font-size:11px;
+            font-weight:bold;
+            letter-spacing:0.5px;
+            padding:3px 8px;
+            border-radius:4px;
+            margin-bottom:12px;
+        }
+
+        label {
+            display:block;
+            font-size:13px;
+            color:#444;
+            margin-bottom:6px;
+        }
+
+        input[type=tel], input[type=text] {
+            width:100%;
+            box-sizing:border-box;
+            padding:12px;
+            font-size:16px;
+            border:1px solid #ccc;
+            border-radius:8px;
+            margin-bottom:12px;
+        }
+
+        .phone-input-row {
+            display:flex;
+            gap:8px;
+        }
+
+        .phone-input-row .prefix {
+            display:flex;
+            align-items:center;
+            padding:0 12px;
+            border:1px solid #ccc;
+            border-radius:8px;
+            color:#444;
+            font-size:16px;
+            background:#f5f5f5;
+        }
+
+        .phone-input-row input { flex:1; margin-bottom:0; }
+
+        button {
+            width:100%;
+            padding:13px;
+            font-size:16px;
+            font-weight:bold;
+            border:none;
+            border-radius:8px;
+            background:#111;
+            color:#fff;
+            cursor:pointer;
+        }
+
+        button:disabled {
+            background:#999;
+            cursor:not-allowed;
+        }
+
+        .link-btn {
+            background:none;
+            width:auto;
+            padding:0;
+            color:#111;
+            text-decoration:underline;
+            font-weight:normal;
+            font-size:13px;
+        }
+
+        .row-between {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-top:10px;
+        }
+
+        .msg {
+            font-size:13px;
+            margin-top:10px;
+            min-height:16px;
+        }
+
+        .msg.error { color:#b3261e; }
+        .msg.info { color:#555; }
+        .msg.success { color:#1b6b3a; }
+
+        .benefits {
+            margin:0 0 18px 0;
+            padding-left:18px;
+            font-size:13px;
+            color:#333;
+        }
+
+        .benefits li { margin-bottom:4px; }
+
+        .legal {
+            font-size:11px;
+            color:#888;
+            text-align:center;
+            margin-top:8px;
+        }
+
+        .legal a { color:#888; }
+
+        footer {
+            background:#111;
+            color:#fff;
+            padding:15px;
+            text-align:center;
+            margin-top:40px;
+            font-size:13px;
+        }
+
+        [hidden] { display:none !important; }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <img src="logo.png" alt="Ringly Logo" />
+    <h1>Ringly</h1>
+    <p>Your trusted platform</p>
+</header>
+
+<nav>
+    <a href="index.html">Home</a>
+    <a href="tnc.html">Terms &amp; Conditions</a>
+    <a href="refund.html">Refund &amp; Cancellations</a>
+</nav>
+
+<div class="container">
+
+    <!-- Step 1: phone -->
+    <div class="card" id="step-phone">
+        <span class="tag">BEST VALUE</span>
+        <h2>Ringly Unlimited</h2>
+        <p class="subtitle">Auto-renews monthly via UPI Autopay or card &middot; Cancel anytime</p>
+        <div class="price-row"><span class="amount">&#8377;10</span><span class="cycle">/month</span></div>
+        <div class="coins-row">500 &#127775; every cycle</div>
+
+        <label for="phone">Log in to subscribe</label>
+        <div class="phone-input-row">
+            <span class="prefix">+91</span>
+            <input type="tel" id="phone" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" />
+        </div>
+        <button id="send-otp-btn">Send OTP</button>
+        <div class="msg" id="phone-msg"></div>
+        <p class="legal">By continuing you agree to our <a href="tnc.html">Terms</a> and <a href="refund.html">Refund Policy</a>.</p>
+    </div>
+
+    <!-- Step 2: otp -->
+    <div class="card" id="step-otp" hidden>
+        <h2>Verify your number</h2>
+        <p class="subtitle" id="otp-subtitle">Enter the OTP sent to your number</p>
+
+        <label for="otp">OTP</label>
+        <input type="text" id="otp" inputmode="numeric" maxlength="6" placeholder="Enter OTP" />
+        <button id="verify-otp-btn">Verify &amp; Continue</button>
+        <div class="row-between">
+            <button class="link-btn" id="change-number-btn">Change number</button>
+            <button class="link-btn" id="resend-otp-btn" disabled>Resend in 30s</button>
+        </div>
+        <div class="msg" id="otp-msg"></div>
+    </div>
+
+    <!-- Step 3: plan / checkout -->
+    <div class="card" id="step-plan" hidden>
+        <span class="tag">BEST VALUE</span>
+        <h2>Ringly Unlimited</h2>
+        <p class="subtitle">Auto-renews monthly via UPI Autopay or card &middot; Cancel anytime</p>
+        <div class="price-row"><span class="amount">&#8377;10</span><span class="cycle">/month</span></div>
+        <div class="coins-row">500 &#127775; every cycle</div>
+        <ul class="benefits">
+            <li>500 coins credited automatically every month</li>
+            <li>Never run out mid-call</li>
+            <li>Cancel anytime from the app</li>
+        </ul>
+        <button id="subscribe-btn">Subscribe &#8377;10/month</button>
+        <div class="msg" id="plan-msg"></div>
+    </div>
+
+    <!-- Step 4: done -->
+    <div class="card" id="step-done" hidden>
+        <h2>You're subscribed &#127881;</h2>
+        <p class="subtitle">Ringly Unlimited is now active on your account. 500 coins land on your wallet every billing cycle.</p>
+        <div class="msg success">Open the Ringly app to start using your coins.</div>
+    </div>
+
+</div>
+
+<footer>
+    &copy; 2026 Ringly. All rights reserved.
+</footer>
+
+<script>
+(function () {
+    var BACKEND_BASE = "https://api.ringly.in";
+    var TENANT = "RINGLY";
+    var PLAN_ID = "ringly-monthly-10";
+    var RESEND_SECONDS = 30;
+
+    var state = { mobile: "", token: "", userId: "", resendTimer: null };
+
+    var stepPhone = document.getElementById("step-phone");
+    var stepOtp = document.getElementById("step-otp");
+    var stepPlan = document.getElementById("step-plan");
+    var stepDone = document.getElementById("step-done");
+
+    var phoneInput = document.getElementById("phone");
+    var otpInput = document.getElementById("otp");
+    var sendOtpBtn = document.getElementById("send-otp-btn");
+    var verifyOtpBtn = document.getElementById("verify-otp-btn");
+    var resendOtpBtn = document.getElementById("resend-otp-btn");
+    var changeNumberBtn = document.getElementById("change-number-btn");
+    var subscribeBtn = document.getElementById("subscribe-btn");
+
+    function showStep(step) {
+        [stepPhone, stepOtp, stepPlan, stepDone].forEach(function (el) { el.hidden = (el !== step); });
+    }
+
+    function setMsg(id, text, kind) {
+        var el = document.getElementById(id);
+        el.textContent = text || "";
+        el.className = "msg" + (kind ? " " + kind : "");
+    }
+
+    function api(path, body) {
+        var headers = { "Content-Type": "application/json", "X-TENANT": TENANT };
+        if (state.token) headers["Authorization"] = "Bearer " + state.token;
+        if (state.userId) headers["user-id"] = state.userId;
+        return fetch(BACKEND_BASE + path, { method: "POST", headers: headers, body: JSON.stringify(body) })
+            .then(function (res) {
+                return res.json().then(function (data) {
+                    if (!res.ok) throw new Error((data && data.error) || "Something went wrong, please try again.");
+                    return data;
+                });
+            });
+    }
+
+    function startResendTimer() {
+        var remaining = RESEND_SECONDS;
+        resendOtpBtn.disabled = true;
+        clearInterval(state.resendTimer);
+        resendOtpBtn.textContent = "Resend in " + remaining + "s";
+        state.resendTimer = setInterval(function () {
+            remaining -= 1;
+            if (remaining <= 0) {
+                clearInterval(state.resendTimer);
+                resendOtpBtn.disabled = false;
+                resendOtpBtn.textContent = "Resend OTP";
+            } else {
+                resendOtpBtn.textContent = "Resend in " + remaining + "s";
+            }
+        }, 1000);
+    }
+
+    function requestOtp() {
+        var digits = phoneInput.value.replace(/\D/g, "");
+        if (digits.length !== 10) {
+            setMsg("phone-msg", "Enter a valid 10-digit mobile number.", "error");
+            return;
+        }
+        state.mobile = "+91" + digits;
+        sendOtpBtn.disabled = true;
+        setMsg("phone-msg", "Sending OTP...", "info");
+        api("/web-service/v1/public/request-otp", { mobile: state.mobile, device: "web-subscribe" })
+            .then(function () {
+                setMsg("phone-msg", "", "");
+                document.getElementById("otp-subtitle").textContent = "Enter the OTP sent to " + state.mobile;
+                otpInput.value = "";
+                showStep(stepOtp);
+                startResendTimer();
+            })
+            .catch(function (err) { setMsg("phone-msg", err.message, "error"); })
+            .finally(function () { sendOtpBtn.disabled = false; });
+    }
+
+    function verifyOtp() {
+        var otp = otpInput.value.trim();
+        if (!otp) {
+            setMsg("otp-msg", "Enter the OTP.", "error");
+            return;
+        }
+        verifyOtpBtn.disabled = true;
+        setMsg("otp-msg", "Verifying...", "info");
+        api("/web-service/v1/public/verify-otp", { mobile: state.mobile, otp: otp })
+            .then(function (data) {
+                state.token = data.token;
+                state.userId = data.userDetails && data.userDetails.id;
+                clearInterval(state.resendTimer);
+                setMsg("plan-msg", "", "");
+                showStep(stepPlan);
+            })
+            .catch(function (err) { setMsg("otp-msg", err.message, "error"); })
+            .finally(function () { verifyOtpBtn.disabled = false; });
+    }
+
+    function subscribe() {
+        subscribeBtn.disabled = true;
+        setMsg("plan-msg", "Setting up your subscription...", "info");
+        api("/web-service/v1/public/initiate", { planId: PLAN_ID, method: "" })
+            .then(function (data) {
+                var options = {
+                    key: data.razorpayKeyId,
+                    currency: data.currency || "INR",
+                    name: "Ringly",
+                    description: "Ringly Unlimited — Monthly Subscription",
+                    recurring: "1",
+                    customer_id: data.razorpayCustomerId,
+                    order_id: data.razorpayOrderId,
+                    prefill: { contact: state.mobile },
+                    theme: { color: "#111111" },
+                    handler: function (response) {
+                        setMsg("plan-msg", "Confirming your subscription...", "info");
+                        api("/web-service/v1/public/confirm", {
+                            mandateId: data.mandateId,
+                            razorpayOrderId: response.razorpay_order_id || "",
+                            razorpayPaymentId: response.razorpay_payment_id,
+                            razorpaySignature: response.razorpay_signature || ""
+                        })
+                        .then(function () { showStep(stepDone); })
+                        .catch(function (err) { setMsg("plan-msg", err.message, "error"); subscribeBtn.disabled = false; });
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            setMsg("plan-msg", "Checkout closed. You can try again anytime.", "error");
+                            subscribeBtn.disabled = false;
+                        }
+                    }
+                };
+                var rzp = new Razorpay(options);
+                rzp.on("payment.failed", function (resp) {
+                    setMsg("plan-msg", "Payment failed: " + (resp.error && resp.error.description || "please try again."), "error");
+                    subscribeBtn.disabled = false;
+                });
+                rzp.open();
+                setMsg("plan-msg", "", "");
+            })
+            .catch(function (err) {
+                setMsg("plan-msg", err.message, "error");
+                subscribeBtn.disabled = false;
+            });
+    }
+
+    sendOtpBtn.addEventListener("click", requestOtp);
+    verifyOtpBtn.addEventListener("click", verifyOtp);
+    resendOtpBtn.addEventListener("click", requestOtp);
+    subscribeBtn.addEventListener("click", subscribe);
+    changeNumberBtn.addEventListener("click", function () {
+        clearInterval(state.resendTimer);
+        showStep(stepPhone);
+    });
+})();
+</script>
+
+</body>
+</html>
