@@ -154,6 +154,31 @@
             cursor:not-allowed;
         }
 
+        .method-toggle {
+            display:flex;
+            gap:8px;
+            margin-bottom:16px;
+        }
+
+        .method-option {
+            flex:1;
+            width:auto;
+            padding:10px;
+            font-size:14px;
+            font-weight:bold;
+            border:1px solid #ccc;
+            border-radius:8px;
+            background:#fff;
+            color:#444;
+            cursor:pointer;
+        }
+
+        .method-option.selected {
+            background:#111;
+            color:#fff;
+            border-color:#111;
+        }
+
         .link-btn {
             background:none;
             width:auto;
@@ -273,6 +298,13 @@
             <li>Never run out mid-call</li>
             <li>Cancel anytime from the app</li>
         </ul>
+
+        <label>Pay via</label>
+        <div class="method-toggle">
+            <button type="button" class="method-option selected" id="method-upi" data-method="upi">UPI Autopay</button>
+            <button type="button" class="method-option" id="method-card" data-method="">Card</button>
+        </div>
+
         <button id="subscribe-btn">Subscribe &#8377;10/month</button>
         <div class="msg" id="plan-msg"></div>
     </div>
@@ -297,7 +329,7 @@
     var PLAN_ID = "ringly-monthly-10";
     var RESEND_SECONDS = 30;
 
-    var state = { mobile: "", token: "", userId: "", resendTimer: null };
+    var state = { mobile: "", token: "", userId: "", resendTimer: null, method: "upi" };
 
     var stepPhone = document.getElementById("step-phone");
     var stepOtp = document.getElementById("step-otp");
@@ -311,6 +343,7 @@
     var resendOtpBtn = document.getElementById("resend-otp-btn");
     var changeNumberBtn = document.getElementById("change-number-btn");
     var subscribeBtn = document.getElementById("subscribe-btn");
+    var methodOptions = document.querySelectorAll(".method-option");
 
     function showStep(step) {
         [stepPhone, stepOtp, stepPlan, stepDone].forEach(function (el) { el.hidden = (el !== step); });
@@ -396,7 +429,7 @@
     function subscribe() {
         subscribeBtn.disabled = true;
         setMsg("plan-msg", "Setting up your subscription...", "info");
-        api("/web-service/v1/public/initiate", { planId: PLAN_ID, method: "" })
+        api("/web-service/v1/public/initiate", { planId: PLAN_ID, method: state.method })
             .then(function (data) {
                 var options = {
                     key: data.razorpayKeyId,
@@ -447,6 +480,12 @@
     changeNumberBtn.addEventListener("click", function () {
         clearInterval(state.resendTimer);
         showStep(stepPhone);
+    });
+    methodOptions.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+            state.method = btn.dataset.method;
+            methodOptions.forEach(function (b) { b.classList.toggle("selected", b === btn); });
+        });
     });
 })();
 </script>
