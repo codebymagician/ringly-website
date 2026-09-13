@@ -388,6 +388,19 @@
             });
     }
 
+    function apiGet(path) {
+        var headers = { "X-TENANT": TENANT };
+        if (state.token) headers["Authorization"] = "Bearer " + state.token;
+        if (state.userId) headers["user-id"] = state.userId;
+        return fetch(BACKEND_BASE + path, { method: "GET", headers: headers })
+            .then(function (res) {
+                return res.json().then(function (data) {
+                    if (!res.ok) throw new Error((data && data.error) || "Something went wrong, please try again.");
+                    return data;
+                });
+            });
+    }
+
     function startResendTimer() {
         var remaining = RESEND_SECONDS;
         resendOtpBtn.disabled = true;
@@ -439,8 +452,21 @@
                 state.token = data.token;
                 state.userId = data.userDetails && data.userDetails.id;
                 clearInterval(state.resendTimer);
-                setMsg("plan-msg", "", "");
-                showStep(stepPlan);
+                return apiGet("/web-service/v1/public/status")
+                    .then(function (status) {
+                        if (status.status === "ACTIVE") {
+                            showStep(stepDone);
+                        } else {
+                            setMsg("plan-msg", "", "");
+                            showStep(stepPlan);
+                        }
+                    })
+                    .catch(function () {
+                        // Status check failing shouldn't block a new subscriber —
+                        // fall back to the buy flow same as before this existed.
+                        setMsg("plan-msg", "", "");
+                        showStep(stepPlan);
+                    });
             })
             .catch(function (err) { setMsg("otp-msg", err.message, "error"); })
             .finally(function () { verifyOtpBtn.disabled = false; });
