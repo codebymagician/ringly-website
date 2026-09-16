@@ -11,5 +11,20 @@
         "89:9B:F5:6C:05:73:E9:B1:F9:1B:3C:82:76:67:0B:6C:BE:94:81:3E:5A:CB:B5:00:52:46:82:99:E3:49:32:22"
       ]
     }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.voxringlyy.app",
+      "sha256_cert_fingerprints": [
+        "AF:85:FE:16:D7:75:21:52:E4:6B:01:14:11:F1:C5:0D:5B:33:37:E2:1D:13:34:16:68:53:38:71:DF:1B:18:E4",
+        "63:DA:A6:4A:8A:0F:5C:59:CA:64:ED:D1:01:36:24:F6:93:FD:86:C0:83:56:5F:02:20:3C:23:49:90:77:2A:B2",
+        "67:77:62:A7:F1:07:DD:2E:F1:66:CA:EC:33:23:B8:B3:B7:FE:B5:B9:DD:0C:25:A5:51:04:EF:06:88:FE:A9:73"
+      ]
+    }
   }
 ]
