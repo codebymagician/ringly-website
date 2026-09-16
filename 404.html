@@ -2,12 +2,41 @@
 <html>
 <head>
     <link rel="icon" href="logo.png" />
-    <meta http-equiv="refresh" content="1;url=https://play.google.com/store/apps/details?id=com.voxringly.app" />
     <script>
-        setTimeout(function () {
-            window.location.href =
-                "https://play.google.com/store/apps/details?id=com.voxringly.app";
-        }, 1000);
+        (function () {
+            var RINGLY = "com.voxringly.app";
+            var RINGLY_LITE = "com.voxringlyy.app";
+            var PLAYSTORE_FALLBACK = "https://play.google.com/store/apps/details?id=" + RINGLY;
+
+            var params = new URLSearchParams(location.search);
+            var tried = params.get("tried");
+            var path = params.get("path") || location.pathname;
+
+            function nextUrl(step) {
+                var p = new URLSearchParams();
+                p.set("tried", step);
+                p.set("path", path);
+                return location.origin + "/404.html?" + p.toString();
+            }
+
+            function intentUrl(pkg, fallback) {
+                return "intent://ringly.in" + path
+                    + "#Intent;scheme=https;package=" + pkg
+                    + ";S.browser_fallback_url=" + encodeURIComponent(fallback)
+                    + ";end";
+            }
+
+            var target;
+            if (!tried) {
+                target = intentUrl(RINGLY, nextUrl("ringly"));
+            } else if (tried === "ringly") {
+                target = intentUrl(RINGLY_LITE, nextUrl("lite"));
+            } else {
+                target = PLAYSTORE_FALLBACK;
+            }
+
+            window.location.replace(target);
+        }());
     </script>
 </head>
 <body></body>
