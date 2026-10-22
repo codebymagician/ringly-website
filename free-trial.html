@@ -162,46 +162,10 @@ svg{width:22px;height:22px;fill:none;stroke:var(--gold);stroke-width:1.5;stroke-
       <p class="terms">By continuing, you confirm you're 18+ and accept our <a href="https://zenaastro.com/terms-and-conditions/">Terms of Use</a> &amp; <a href="https://zenaastro.com/privacy-policy/">Privacy Policy</a></p>
     </div>
     <div id="s-load" hidden><p>Starting your trial…</p></div>
-    <div id="s-pick" hidden>
-      <div class="ph-head"><button type="button" id="b-pick-back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button><div><h2>Payments</h2><p class="amt">Amount : ₹1</p></div></div>
-      <div class="sec">UPI <span class="fast"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>Fastest</span></div>
-      <p class="ban">88.5% of our users prefer paying via UPI</p>
-      <button class="app" data-app="phonepe"><i><span class="crop" style="width:52px;height:52px"><img src="/logos/phonepe.svg" alt="" style="height:52px;width:auto"></span></i><span>PhonePe</span><b>›</b></button>
-      <button class="app" data-app="gpay"><i><span class="crop" style="width:30px;height:30px"><img src="/logos/gpay.svg" alt="" style="height:30px;width:auto"></span></i><span>Google Pay</span><b>›</b></button>
-      <button class="app" data-app="paytm"><i><img src="/logos/paytm.svg" alt="" style="width:38px;height:auto"></i><span>Paytm</span><b>›</b></button>
-      <div class="sec">Pay via QR code</div>
-      <button class="app" id="b-qr"><i><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#111" stroke-width="1.6"><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h2v2h-2zM18 14h2v2h-2zM14 18h2v2h-2zM18 18h2v2h-2z"/></svg></i><span>Scan QR Code</span><b>›</b></button>
-    </div>
-    <div id="s-wait" hidden>
-      <div class="hg" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M16 8h32M16 56h32M18 8c0 14 10 18 14 24-4 6-14 10-14 24M46 8c0 14-10 18-14 24 4 6 14 10 14 24"/><path d="M25 15h14l-7 11zM23 53c4-9 14-9 18 0z" fill="currentColor" stroke="none" style="fill:var(--gold)"/></svg></div>
-      <h2 id="wait-h">Approve the payment in your UPI app</h2>
-      <p id="wait-p">Once approved, this page will update on its own.</p>
-      <p class="safe" id="wait-safe">✓ 100% safe and secure</p>
-      <button class="lnk" id="b-wait-other">Choose another app</button>
-      <p class="hint">Do not go back or close the app</p>
-    </div>
     <div id="s-ok" hidden>
       <div class="hg ok" aria-hidden="true"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22"/><path d="M22 33l7 7 14-15"/></svg></div>
       <h2>Payment Successful</h2>
       <p>Your free trial has started</p>
-    </div>
-    <div id="s-nf" hidden>
-      <h2>Select a different UPI app</h2>
-      <p>The app you selected isn't found on this device. Choose another UPI app to pay ₹1 and start your free trial.</p>
-      <button class="cta" id="b-other">Select another app</button>
-      <button class="lnk" id="b-nfx">Cancel</button>
-    </div>
-    <div id="s-soon" hidden>
-      <div style="font-size:36px">🚧</div>
-      <h2>Payment gateway yet to be integrated</h2>
-      <p>This is a demo page. No payment was taken.</p>
-    </div>
-    <div id="s-pay" hidden>
-      <h2>Pay ₹1 to start</h2>
-      <p>Scan with any UPI app, or tap below on your phone. Refunded instantly.</p>
-      <img id="qr" alt="UPI QR code" hidden>
-      <a class="cta" id="b-upi" href="#" hidden>Pay with UPI app</a>
-      <p id="pay-wait" class="wait">Waiting for payment…</p>
     </div>
     <div id="s-done" hidden>
       <img class="lg" src="/logo.svg" alt="Zena" width="72" height="72">
@@ -230,15 +194,16 @@ svg{width:22px;height:22px;fill:none;stroke:var(--gold);stroke-width:1.5;stroke-
 </script>
 <script src="/attribution.js"></script>
 <script src="/meta-pixel.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 (function(){
-// Backend base URL. The /web-service/v1 routes are in zenaclub-backend.
+// Backend base URL. The /web-service/v1 routes are in zenaclub-backend; payment is Razorpay (same account as Ringly).
 var API="https://apis.zenaclub.com";
+var PLAN_ID="zena-90d-699-ringly"; // ₹1 now, ₹699 per 90 days; only this page asks for it
 var $=function(i){return document.getElementById(i)};
-var APP={pkg:"com.zenaastro.app",play:"https://play.google.com/store/apps/details?id=com.zenaastro.app"}; // Zena Android package and Play Store listing URL; set both to enable "Download the app"
-var PAYMENTS_LIVE=true;
+var APP={pkg:"com.zenaastro.app",play:"https://play.google.com/store/apps/details?id=com.zenaastro.app"};
 var token="",userId="",mobile="";   // in memory only, never persisted
-var pollTimer=null;
+var isAnd=/Android/i.test(navigator.userAgent);
 
 function api(path,body,auth,method){
   var h={"Content-Type":"application/json","X-TENANT":"ZENA","device-id":"web"};
@@ -248,9 +213,9 @@ function api(path,body,auth,method){
       if(!r.ok)throw new Error(j.error||"Something went wrong. Please try again.");
       return j})});
 }
-function show(id){["s-phone","s-otp","s-load","s-soon","s-pick","s-wait","s-ok","s-nf","s-pay","s-done"].forEach(function(s){$(s).hidden=s!==id});
-  var lg=id==="s-phone"||id==="s-otp",fl=id==="s-wait"||id==="s-ok"||id==="s-done",pg=id==="s-pick";
-  $("paywall").classList.toggle("login",lg);$("paywall").classList.toggle("full",fl);$("paywall").classList.toggle("pay",pg);$("b-close").hidden=lg||fl||pg;err("")}
+function show(id){["s-phone","s-otp","s-load","s-ok","s-done"].forEach(function(s){$(s).hidden=s!==id});
+  var lg=id==="s-phone"||id==="s-otp",fl=id==="s-ok"||id==="s-done";
+  $("paywall").classList.toggle("login",lg);$("paywall").classList.toggle("full",fl);$("b-close").hidden=lg||fl;err("")}
 function err(m){$("err").textContent=m;$("err").hidden=!m}
 function busy(b,on){b.disabled=on;b.style.opacity=on?.6:1}
 function run(btn,fn){busy(btn,true);err("");return Promise.resolve().then(fn).catch(function(e){err(e.message)}).then(function(){busy(btn,false)})}
@@ -291,47 +256,38 @@ function verifyOtp(){
     try{sessionStorage.setItem("zt",JSON.stringify({token:token,userId:userId,mobile:mobile}))}catch(e){}
     return next()}).catch(function(e){$("otp").value="";$("otp").focus();throw e});
 }
-// after login go straight to payment: app picker on mobile, QR on desktop
+// after login go straight to payment
 function next(){
-  if(!PAYMENTS_LIVE){show("s-soon");return}
   show("s-load");
   // already subscribed? then there is nothing to pay for. If the check itself fails, fall through
   // to payment: initiate rejects a duplicate subscription server-side anyway.
   return api("/web-service/v1/auth/subscription/status",null,true,"GET").then(function(r){return r.status==="ACTIVE"},function(){return false}).then(function(active){
-    if(active){
-      showDone();return;
-    }
-    if(isMob){show("s-pick");return}
-    return startPayment();
+    if(active){showDone();return}
+    return checkout();
   });
 }
-var qdata=null,sel="paytm",launched=false;
-var UA=navigator.userAgent,isAnd=/Android/i.test(UA),isMob=/Android|iPhone|iPad|iPod/i.test(UA);
-var APPS={paytm:{n:"Paytm",pkg:"net.one97.paytm",ios:"paytmmp"},phonepe:{n:"PhonePe",pkg:"com.phonepe.app",ios:"phonepe"},gpay:{n:"Google Pay",pkg:"com.google.android.apps.nbu.paisa.user",ios:"tez"}};
-// initiate + QR once per page; the mandate and txnToken are reused if the user switches app.
-function getPayment(){
-  if(qdata)return Promise.resolve(qdata);
+// Razorpay Checkout on a recurring UPI Autopay order: the ₹1 debit registers the mandate.
+function checkout(){
   var ev=zmeta.uuid(),mm=zmeta.match();
   zmeta.track("InitiateCheckout",100,ev);
-  return api("/web-service/v1/auth/subscription/initiate",{method:"upi",metaEventId:ev,fbc:mm.fbc,fbp:mm.fbp,sourceUrl:mm.sourceUrl},true).then(function(r){
-    if(!r.paytmTxnToken)throw new Error("Payment is unavailable right now. Please try again later.");
-    return api("/web-service/v1/auth/subscription/paytm/qr",{mandateId:r.mandateId,txnToken:r.paytmTxnToken},true)
-  }).then(function(q){qdata=q;return q});
+  return api("/web-service/v1/auth/subscription/initiate",{planId:PLAN_ID,provider:"RAZORPAY",method:"upi",metaEventId:ev,fbc:mm.fbc,fbp:mm.fbp,sourceUrl:mm.sourceUrl},true).then(function(d){
+    var rzp=new Razorpay({
+      key:d.razorpayKeyId,currency:d.currency||"INR",name:"Zena",description:"Free trial: \u20b91 now, \u20b9699 for 3 months after 1 day",
+      recurring:"1",customer_id:d.razorpayCustomerId,order_id:d.razorpayOrderId,
+      prefill:{contact:"+91"+mobile},theme:{color:"#8c7c4f"},
+      handler:function(r){
+        show("s-load");
+        api("/web-service/v1/auth/subscription/confirm",{mandateId:d.mandateId,razorpayOrderId:r.razorpay_order_id||"",razorpayPaymentId:r.razorpay_payment_id,razorpaySignature:r.razorpay_signature||""},true).then(function(c){
+          zmeta.track("StartTrial",100,d.mandateId);
+          show("s-ok");setTimeout(showDone,1600);
+        },function(e){$("s-load").hidden=true;err(e.message)});
+      },
+      modal:{ondismiss:function(){location.hash=""}}
+    });
+    rzp.on("payment.failed",function(r){$("s-load").hidden=true;err("Payment failed: "+(r.error&&r.error.description||"please try again."))});
+    rzp.open();
+  }).catch(function(e){$("s-load").hidden=true;err(e.message)});
 }
-function startPayment(){
-  return getPayment().then(function(q){
-    if(q.qrCodeImageUrl){$("qr").src=q.qrCodeImageUrl;$("qr").hidden=false}
-    if(q.qrCodeContent){$("b-upi").href=q.qrCodeContent;$("b-upi").hidden=!isMob}
-    show("s-pay");poll(q)});
-}
-// ponytail: assumes the deep link is upi://...; any other scheme (e.g. paytmmp://) only opens its own app.
-function appLink(link,a){
-  var m=/^upi:\/\/(.*)$/i.exec(link);if(!m)return link;
-  if(isAnd)return "intent://"+m[1]+"#Intent;scheme=upi;package="+a.pkg+";end";
-  return a.ios==="tez"?"tez://upi/"+m[1]:a.ios+"://"+m[1];
-}
-// Only Android can tell an app opened (the page goes hidden); iOS shows an "Open in <app>?" prompt
-// that can take longer than any timer, so there it just waits and polls.
 // Download button: opens the app if installed (Android), otherwise the Play Store listing.
 function showDone(){
   var a=$("b-app-dl");
@@ -342,53 +298,7 @@ function showDone(){
   if(APP.play)a.href=isAnd&&APP.pkg?"intent://#Intent;package="+APP.pkg+";action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;S.browser_fallback_url="+encodeURIComponent(play)+";end":play;
   show("s-done");
 }
-// "Approve the payment" while the user is in the UPI app; "Processing Payment" once they are back and it isn't confirmed yet.
-function setWait(proc){
-  $("wait-h").textContent=proc?"Processing Payment":"Approve the payment in your UPI app";
-  $("wait-p").textContent=proc?"Please wait while we process your payment":"Once approved, this page will update on its own.";
-  $("wait-safe").hidden=proc;$("b-wait-other").hidden=proc;
-}
-function onVis(){
-  if(document.hidden){launched=true;return}
-  if(launched&&!$("s-wait").hidden)setWait(true);
-  if(pollNow)pollNow(); // back from the UPI app: check right away instead of waiting for the next tick
-}
-function payApp(){
-  return getPayment().then(function(q){
-    var link=q.qrCodeContent||"";
-    if(!link)throw new Error("Couldn't open a UPI app. Try the QR code.");
-    if(sel!=="paytm"&&!/^upi:/i.test(link))throw new Error("That app isn't supported for this payment yet. Choose Paytm or QR.");
-    try{sessionStorage.setItem("zt",JSON.stringify({token:token,userId:userId,mobile:mobile,mandateId:q.internalOrderId}))}catch(e){}
-    launched=false;document.removeEventListener("visibilitychange",onVis);document.addEventListener("visibilitychange",onVis);
-    location.href=appLink(link,APPS[sel]);
-    setWait(false);show("s-wait");poll(q);
-    if(isAnd)setTimeout(function(){if(!launched&&!$("s-wait").hidden){clearTimeout(pollTimer);pollNow=null;show("s-nf")}},2500);
-  });
-}
-var pollNow=null;
-function poll(q){
-  clearTimeout(pollTimer);
-  var end=Date.now()+(q.maxPollingDurationMs||180000);
-  function stop(){pollNow=null}
-  function tick(){pollTimer=setTimeout(check,q.pollingIntervalMs||3000)}
-  function check(){
-    clearTimeout(pollTimer);
-    api("/web-service/v1/auth/subscription/paytm/qr/status?mandateId="+encodeURIComponent(q.internalOrderId),null,true,"GET").then(function(s){
-      if(s.isPaid){stop();if(s.isTrial)zmeta.track("StartTrial",s.amount||100,q.internalOrderId);show("s-ok");setTimeout(showDone,1600);return}
-      if(s.isFinal||Date.now()>end){stop();$("pay-wait").textContent="";err("Payment didn't complete. Close and try again.");return}
-      tick()
-    }).catch(function(){if(Date.now()>end){stop();err("Couldn't confirm payment. Please try again.")}else tick()});
-  }
-  pollNow=check;tick();
-}
 $("b-send").onclick=function(){run(this,sendOtp)};
-// Tapping an app row pays with it straight away (no radio + Pay button)
-document.querySelectorAll(".app[data-app]").forEach(function(b){b.onclick=function(){sel=b.dataset.app;run(b,payApp)}});
-$("b-pick-back").onclick=function(){location.hash=""};
-$("b-qr").onclick=function(){run(this,startPayment)};
-$("b-other").onclick=function(){show("s-pick")};
-$("b-wait-other").onclick=function(){clearTimeout(pollTimer);pollNow=null;show("s-pick")};
-$("b-nfx").onclick=function(){location.hash=""};
 $("b-verify").onclick=function(){run(this,verifyOtp)};
 var editingNumber=false;
 $("b-change").onclick=function(){editingNumber=true;show("s-phone");$("mobile").focus()};
@@ -413,13 +323,13 @@ try{var sv=JSON.parse(sessionStorage.getItem("zt")||"{}");
   if(sv.token&&sv.userId&&sv.mobile){token=sv.token;userId=sv.userId;mobile=sv.mobile}}catch(e){}
 // already logged in: the main button goes straight to payment (no phone/OTP, no second tap)
 $("b-main").onclick=function(e){
-  if(token){Promise.resolve(next()).catch(function(e){err(e.message)});return}
+  if(token){e.preventDefault();location.hash="paywall";Promise.resolve(next()).catch(function(e){err(e.message)});return}
   // logged out: open the sheet and focus the number inside this tap, or iOS will not raise the keyboard
   e.preventDefault();location.hash="paywall";$("mobile").focus();
 };
-// refresh with the sheet open: mobile resumes at the picker; desktop closes it so one tap starts payment
-if(token&&location.hash==="#paywall"){isMob&&PAYMENTS_LIVE?Promise.resolve(next()).catch(function(e){err(e.message)}):location.hash=""}
-$("b-close").onclick=function(e){e.preventDefault();clearTimeout(pollTimer);pollNow=null;location.hash=""};
+// a refresh with the sheet open just closes it, so Checkout never pops up unprompted
+if(location.hash==="#paywall")location.hash="";
+$("b-close").onclick=function(e){e.preventDefault();location.hash=""};
 })();
 </script>
 </body>
