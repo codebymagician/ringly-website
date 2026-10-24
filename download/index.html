@@ -6,6 +6,7 @@
     <title>Get Ringly</title>
     <link rel="icon" href="../logo.png" />
     <meta name="description" content="Talk to verified astrologers on Ringly. Download the app to start.">
+    <script src="/ringly-meta-pixel.js"></script>
     <style>
         html, body { margin:0; height:100%; background:#111; color:#fff; font-family:Arial, sans-serif; }
         main { min-height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; padding:24px; text-align:center; }
@@ -24,7 +25,9 @@
 <script>
     (function () {
         // Pass the ad's UTMs through as the Play install referrer, so
-        // InstallReferrerManager can report them to Mixpanel on first open.
+        // InstallReferrerManager can report them to Mixpanel + the backend on first
+        // open. fbclid is what ties the eventual recharge back to this web click via
+        // the Meta Conversions API, so it must survive into the referrer.
         var q = new URLSearchParams(location.search);
         var ref = new URLSearchParams();
         ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "fbclid", "gclid"]
@@ -35,7 +38,17 @@
             + "&referrer=" + encodeURIComponent(ref.toString());
 
         document.getElementById("cta").href = url;
-        window.location.replace(url);
+
+        // Fire the Meta Pixel (PageView on load, plus a Lead for the ad click) before
+        // leaving the page, then redirect. A hard, immediate location.replace() can
+        // cancel the in-flight pixel request, so give it a short beat -- the CTA stays
+        // tappable meanwhile, and a slow pixel still can't hold the user past the
+        // fallback. No-op when the pixel id isn't provisioned yet.
+        try { if (window.rmeta) rmeta.track("Lead", rmeta.uuid()); } catch (e) {}
+
+        var redirected = false;
+        function go() { if (!redirected) { redirected = true; window.location.replace(url); } }
+        setTimeout(go, window.rmeta && rmeta.enabled ? 500 : 0);
     }());
 </script>
 </body>
